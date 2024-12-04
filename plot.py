@@ -39,107 +39,69 @@ def extraire_coord_fichier(fichier):
 
 # FONCTIONS AFFICHAGE
 
-# def configPlot(vect_deplacement, ax):
-#     # Récupération des points de trajectoire dans l'espace
-#     t = np.linspace(0, 5, 1000) #nb de points à afficher
-#     x = [coord[0] for coord in vect_deplacement]
-#     y = [coord[1] for coord in vect_deplacement]
-#     z = [coord[2] for coord in vect_deplacement]
-#     beta = [coord[4] for coord in vect_deplacement]
-#     gamma = [coord[5] for coord in vect_deplacement]
+def configPlot(coordonnees, ax):
+    # Récupération des points de trajectoire dans l'espace
+    t = np.linspace(0, 5, 12)  # Nombre de points à afficher
+    x = [coord[0] for coord in coordonnees]
+    y = [coord[1] for coord in coordonnees]
+    z = [coord[2] for coord in coordonnees]
+    i = [coord[3] for coord in coordonnees]
+    j = [coord[4] for coord in coordonnees]
+    k = [coord[5] for coord in coordonnees]
 
-#     # Configuration initiale : définir les limites et la ligne vide qui sera mise à jour
-#     ax.set_xlim(0, 100)
-#     ax.set_ylim(0, 100)
-#     ax.set_zlim(0, 20)
-#     line, = ax.plot([], [], [], lw=2)
+    # Configuration initiale des limites (ajustées aux données)
+    # offset de +/- 2 pour que le vecteur directeur de l'outil soit dans le plot
+    ax.set_xlim(min(x)-2, max(x)+2)
+    ax.set_ylim(min(y)-2, max(y)+2)
+    ax.set_zlim(min(z)-2, max(z)+2) 
 
-#     # Plateau 70x85 (en noir) dans le plan z=0
-#     x_rect = [0, 70, 70, 0, 0]  # Sommets du rectangle sur l'axe x
-#     y_rect = [0, 0, 85, 85, 0]  # Sommets du rectangle sur l'axe y
-#     z_rect = [0, 0, 0, 0, 0]          # Le rectangle est dans le plan z=0
+    # Ligne pour la trajectoire
+    line, = ax.plot([], [], [], lw=2)
 
-#     ax.plot(x_rect, y_rect, z_rect, color='black')  # Tracer le rectangle
-#     # Outil en rouge
-#     tool, = ax.plot([], [], [], lw=3, color='red')  # Ligne verticale en rouge
+    return line, x, y, z, i, j, k, t
 
-#     return line,tool,x,y,z,t, beta,gamma
+# Fonction pour initialiser l'animation
+def initPlot(line):
+    line.set_data([], [])
+    line.set_3d_properties([])
+    return line,
 
-# # Fonction pour initialiser l'animation (ici on efface la ligne)
-# def initPlot(line):
-#     line.set_data([], [])
-#     line.set_3d_properties([])
-#     # tool.set_data([], [])
-#     # tool.set_3d_properties([])
-#     return line
+# Fonction de mise à jour de l'animation
+def updatePlot(num, line, ax, x, y, z, i, j, k):
+    # Mise à jour de la trajectoire
+    line.set_data(x[:num], y[:num])
+    line.set_3d_properties(z[:num])
 
-# # Fonction de mise à jour de l'animation : tracer la trajectoire au fur et à mesure
-# def updatePlot(num,line,x,y,z):
-#     #Somme les déplacements depuis le début pour obtenir la position actuelle
-#     x_rel = np.cumsum(x[:num])
-#     y_rel = np.cumsum(y[:num])
-#     z_rel = np.cumsum(z[:num])
-#     line.set_data(x_rel,y_rel)
-#     line.set_3d_properties(z_rel)
+    # Ajouter un nouveau vecteur quiver pour chaque frame
+    ax.quiver(x[num], y[num], z[num], i[num], j[num], k[num], color='blue')
 
-#      # Calculer la position de l'outil
-#     # tool_x = x[num-1]
-#     # tool_y = y[num-1]
-#     # tool_z_start = z[num-1]+10
-#     # tool_z_end = z[num-1]
-#     # OUTIL :
-#     # tool_x = np.cumsum(x[:num])
-#     # tool_y = np.cumsum(y[:num])
-#     # tool_z = np.cumsum(z[:num])
-#     # tool.set_data(tool_x,tool_y)
-#     # tool.set_3d_properties(tool_z)
+    return line,
 
-#     # Appliquer les rotations
-#     # Direction de la ligne verticale avant rotation
-#     #direction = np.array([0, 0, 1])  # Ligne verticale de (0, 0, 0) à (0, 0, 1)
+def affichage(coordonnees):
+    # Création de la figure 3D
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
-#     # # Récupération des angles 
-#     # angleX = beta[num]
-#     # angleY = gamma[num]
+    # Configuration initiale
+    line, x, y, z, i, j, k, t = configPlot(coordonnees, ax)
 
-#     # # Matrices de rotation
-#     # R_x = np.array([[1, 0, 0],
-#     #                 [0, np.cos(angleX), -np.sin(angleX)],
-#     #                 [0, np.sin(angleX), np.cos(angleX)]])
-    
-#     # R_y = np.array([[np.cos(angleY), 0, np.sin(angleY)],
-#     #                 [0, 1, 0],
-#     #                 [-np.sin(angleY), 0, np.cos(angleY)]])
-    
-#     # # Appliquer les rotations
-#     # direction_rotated = R_y @ (R_x @ direction)  # Effectuer la multiplication de matrices
+    # Création de l'animation
+    ani = FuncAnimation(
+        fig, 
+        updatePlot, 
+        frames=len(t), 
+        fargs=(line, ax, x, y, z, i, j, k), 
+        init_func=lambda: initPlot(line), 
+        blit=False, 
+        interval=5
+    )
 
-#     # Calculer les points de la ligne verticale après rotation
-#     # tool_z_end_rotated = tool_z_start + direction_rotated[2] * (tool_z_end - tool_z_start)
-#     # tool.set_data([tool_x, tool_x*direction_rotated[0]], [tool_y, tool_y*direction_rotated[1]])
-#     # tool.set_3d_properties([tool_z_start, tool_z_end_rotated])
-
-#     return line
-
-    # def affichage(vect_deplacement):
-    #     # Création de la figure 3D
-    #     fig = plt.figure()
-    #     ax = fig.add_subplot(111, projection='3d')
-
-    #     # Création de l'animation
-    #     line,tool,x,y,z,t,beta,gamma = configPlot(vect_deplacement,ax)
-    #     ani = FuncAnimation(fig, updatePlot, frames=len(t), fargs=(line, x, y, z), init_func=lambda: initPlot(line), blit=False, interval=5)
-
-    #     # Affichage de l'animation
-    #     plt.show()    
+    # Affichage de l'animation
+    plt.show()
 
 
 # ------------------ MAIN LOOP --------------------------#
 
-# Récupération des positions de l'outil à partir du fichier txt
-coord = extraire_coord_fichier(fichierIN)
-for c in coord:
-    print('coordonnees :',c)
 
 
 
