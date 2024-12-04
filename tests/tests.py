@@ -34,5 +34,9 @@ fichiers = ['input\\0.txt','input\\1.txt','input\\2.txt','input\\3.txt','input\\
 fichier_fusionne = 'output\\layers0to9.txt'
 fusion_fichiers(fichiers,fichier_fusionne)
 
-# TEST 4 :
-# Resultat :
+# TEST 4 : Combinaison Test 2 + 3 pour afficher la trajectoire sur l'impression d'une pyramide en 9 couches
+# Resultat : OK, très long si beaucoup de frames, utiliser frames_skip pour en sauter quelque unes
+fichierIN = 'output\\layers0to9.txt'
+coord = extraire_coord_fichier(fichierIN)
+frames_skip = 50
+affichage(coord,frames_skip)

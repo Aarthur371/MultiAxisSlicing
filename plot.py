@@ -13,6 +13,9 @@ from matplotlib.animation import FuncAnimation
 # Fichier d'entrée (coordonnées XYZIJK)
 fichierIN = 'input\\layer0.txt'
 
+# Animation du plot : variable globale
+ani = None
+
 #------------------- FONCTIONS ------------------------#
 
 
@@ -57,6 +60,12 @@ def configPlot(coordonnees, ax):
     ax.set_ylim(min(y)-2, max(y)+2)
     ax.set_zlim(min(z)-2, max(z)+2) 
 
+    # Configuration légende
+    ax.set_title("Trajectoire et orientation outil")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
+
     # Ligne pour la trajectoire
     line, = ax.plot([], [], [], lw=2)
     # Vecteur pour la direction de l'outil
@@ -71,7 +80,7 @@ def initPlot(line,tool):
     return line,tool
 
 # Fonction de mise à jour de l'animation
-def updatePlot(num, line, tool, ax, x, y, z, i, j, k):
+def updatePlot(num, line, tool, ax, x, y, z, i, j, k, frames_skip):
     # Mise à jour de la trajectoire
     line.set_data(x[:num], y[:num])
     line.set_3d_properties(z[:num])
@@ -79,9 +88,18 @@ def updatePlot(num, line, tool, ax, x, y, z, i, j, k):
     # Ajouter un nouveau vecteur quiver pour chaque frame
     tool = ax.quiver(x[num], y[num], z[num], i[num], j[num], k[num], color='blue')
 
+    # Condition pour arrêter l'animation après l'affichage de la dernière frame
+    if num == (len(x)/frames_skip) - 1:
+        print("Fin de trace de la trajectoire")
+        ani.event_source.stop()
+
+
     return line,
 
-def affichage(coordonnees):
+def affichage(coordonnees,frames_skip):
+    ''' Affichage des trajectoires XYZ et de l'orientation de l'outil IJK dans un graphique matplotlib
+    coordonnees : vecteur [x,y,z,i,j,k]
+    frames_skip : nombre de frames a sauter lors de l'affichage (plus rapide) '''
     # Création de la figure 3D
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -93,14 +111,16 @@ def affichage(coordonnees):
     ani = FuncAnimation(
         fig, 
         updatePlot, 
-        frames = range(0, len(t), 2), 
-        fargs=(line, tool, ax, x, y, z, i, j, k), 
+        frames = range(0, len(t), frames_skip), 
+        fargs=(line, tool, ax, x, y, z, i, j, k, frames_skip), 
         init_func=lambda: initPlot(line,tool), 
         blit=False, 
-        interval=10 
+        interval=10,
+        repeat=False
     ) 
-    # frames range(start,stop,step) avec x le pas d'incrémentation (x=2 : 1 frame sur 2 affichée)
-    #interval = intervalle de rafraichissment de la figure en ms
+    # frames range(start,stop,frames_skip) avec frames_skip=2 : 1 frame sur 2 affichée
+    #interval : intervalle de rafraichissment de la figure en ms
+    #repeat : permet de rejouer ou non l'animation une fois qu'elle est terminée
 
     # Affichage de l'animation
     plt.show()
