@@ -20,8 +20,8 @@ from plot import extraire_coord_fichier, affichage
 # Resultat : OK 
 # Test pour 2 fichiers différents (Attention au paramètre frames configuré pour sauter certaines frames)
 
-#fichierIN = 'input\\layer0.txt'
-fichierIN = 'input\\carre_3axes.txt'
+fichierIN = 'input\\layer0.txt'
+#fichierIN = 'input\\carre_3axes.txt'
 coord = extraire_coord_fichier(fichierIN)
 affichage(coord)
 

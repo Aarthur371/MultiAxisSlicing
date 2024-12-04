@@ -59,23 +59,25 @@ def configPlot(coordonnees, ax):
 
     # Ligne pour la trajectoire
     line, = ax.plot([], [], [], lw=2)
+    # Vecteur pour la direction de l'outil
+    tool = ax.quiver([], [], [], [], [], [], color='blue')
 
-    return line, x, y, z, i, j, k, t
+    return line, tool, x, y, z, i, j, k, t
 
 # Fonction pour initialiser l'animation
-def initPlot(line):
+def initPlot(line,tool):
     line.set_data([], [])
     line.set_3d_properties([])
-    return line,
+    return line,tool
 
 # Fonction de mise à jour de l'animation
-def updatePlot(num, line, ax, x, y, z, i, j, k):
+def updatePlot(num, line, tool, ax, x, y, z, i, j, k):
     # Mise à jour de la trajectoire
     line.set_data(x[:num], y[:num])
     line.set_3d_properties(z[:num])
 
     # Ajouter un nouveau vecteur quiver pour chaque frame
-    ax.quiver(x[num], y[num], z[num], i[num], j[num], k[num], color='blue')
+    tool = ax.quiver(x[num], y[num], z[num], i[num], j[num], k[num], color='blue')
 
     return line,
 
@@ -85,15 +87,15 @@ def affichage(coordonnees):
     ax = fig.add_subplot(111, projection='3d')
 
     # Configuration initiale
-    line, x, y, z, i, j, k, t = configPlot(coordonnees, ax)
+    line, tool, x, y, z, i, j, k, t = configPlot(coordonnees, ax)
 
     # Création de l'animation
     ani = FuncAnimation(
         fig, 
         updatePlot, 
         frames = range(0, len(t), 2), 
-        fargs=(line, ax, x, y, z, i, j, k), 
-        init_func=lambda: initPlot(line), 
+        fargs=(line, tool, ax, x, y, z, i, j, k), 
+        init_func=lambda: initPlot(line,tool), 
         blit=False, 
         interval=10 
     ) 
