@@ -40,8 +40,10 @@ def extraire_coord_fichier(fichier):
 # FONCTIONS AFFICHAGE
 
 def configPlot(coordonnees, ax):
+    # Récupération du nombre de coordonnées à afficher
+    size = len(coordonnees)
     # Récupération des points de trajectoire dans l'espace
-    t = np.linspace(0, 5, 12)  # Nombre de points à afficher
+    t = np.linspace(0,100,size)  # Nombre de points à afficher
     x = [coord[0] for coord in coordonnees]
     y = [coord[1] for coord in coordonnees]
     z = [coord[2] for coord in coordonnees]
@@ -89,12 +91,14 @@ def affichage(coordonnees):
     ani = FuncAnimation(
         fig, 
         updatePlot, 
-        frames=len(t), 
+        frames = range(0, len(t), 2), 
         fargs=(line, ax, x, y, z, i, j, k), 
         init_func=lambda: initPlot(line), 
         blit=False, 
-        interval=5
-    )
+        interval=10 
+    ) 
+    # frames range(start,stop,step) avec x le pas d'incrémentation (x=2 : 1 frame sur 2 affichée)
+    #interval = intervalle de rafraichissment de la figure en ms
 
     # Affichage de l'animation
     plt.show()
