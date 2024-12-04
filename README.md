@@ -1,7 +1,7 @@
 # MultiAxisParser
 Simplification du passage d'un slicing non planaire à la commande d'un robot KUKA 6 axes
 
-##Fonctionnalités implementées ##
+## Fonctionnalités implémentées ##
 
 Entrée : fichier txt contenant la liste des positions successives de l'outil (buse d'impression) au format xx.xx yy.yy zz.zz ii.ii jj.jj kk.kk
 
