@@ -11,7 +11,7 @@ from matplotlib.animation import FuncAnimation
 #----------------------VARIABLES-------------------------#
 
 # Fichier d'entrée (coordonnées XYZIJK)
-fichierIN = 'input\\layer0.txt'
+fichierIN = 'plot\\input\\layer0.txt'
 
 # Animation du plot : variable globale
 ani = None
