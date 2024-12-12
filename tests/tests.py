@@ -6,6 +6,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from plot.plot import extraire_coord_fichier, affichage
 from utils.utils import fusion_fichiers
+from preprocessing.STLtoTET import mesh_to_tet, stl_to_node_ele, stl_to_off
 
 # TEST 1 :Récupération des positions de l'outil à partir du fichier txt
 # Resultat : OK
@@ -40,3 +41,22 @@ from utils.utils import fusion_fichiers
 # coord = extraire_coord_fichier(fichierIN)
 # frames_skip = 50
 # affichage(coord,frames_skip)
+
+# # TEST 5 : Conversion d'un fichier STL en fichier OFF
+# # Resultat : ok
+# input_file = "preprocessing//input//pyramide1.stl"
+# out_file = "preprocessing//output//pyramide1.off"
+# stl_to_off(input_file,out_file)
+
+
+# TEST 6 : Conversion des ele et node en fichier TET
+# Resultat : 
+stl = "preprocessing//input//pyramide1.stl"
+ele = "preprocessing//input//ImageToStl.com_pyramide1.1.ele"
+nodes = "preprocessing//input//ImageToStl.com_pyramide1.1.node"
+out_file = "preprocessing//output//pyramide1.tet"
+stl_to_node_ele(stl,nodes,ele)
+mesh_to_tet(nodes,ele,out_file)
+
+# TEST 7 :
+# Resultat : 
