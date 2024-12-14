@@ -52,12 +52,10 @@ from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_node_ele
 
 # TEST 6 : Conversion des ele et node en fichier TET
 # Resultat : 
-# stl = "preprocessing//input//pyramide1.stl"
-# ele = "preprocessing//input//ImageToStl.com_pyramide1.1.ele"
-# nodes = "preprocessing//input//ImageToStl.com_pyramide1.1.node"
-# out_file = "preprocessing//output//pyramide1.tet"
-# stl_to_node_ele(stl,nodes,ele)
-# mesh_to_tet(nodes,ele,out_file)
+ele = "preprocessing//output//calotte_spherique_R200.1.ele"
+nodes = "preprocessing//output//calotte_spherique_R200.1.node"
+out_file = "preprocessing//output//calotte_spherique_R200.1.tet"
+mesh_to_tet(nodes,ele,out_file)
 
 # TEST 7 : Conversion de OFF en ele et node
 # Resultat : 
@@ -69,21 +67,21 @@ from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_node_ele
 
 # # TEST 8 : représentation graphique d'un fichier node
 # # Resultat  : ok
-nodes = "preprocessing//output//calotte_spherique.node"
-plot_nodes_from_file(nodes,1)
-nodes2 = "preprocessing//output//calotte_spherique_R200.1.node"
-plot_nodes_from_file(nodes2,2)
+# nodes = "preprocessing//output//calotte_spherique.node"
+# plot_nodes_from_file(nodes,1)
+# nodes2 = "preprocessing//output//calotte_spherique_R200.1.node"
+# plot_nodes_from_file(nodes2,2)
 #plt.show()
 
 # TEST 9 : représentation graphique des triangles (node + ele)
 # Resultat : ok
-nodes = "preprocessing//output//calotte_spherique.node"
-ele = "preprocessing//output//calotte_spherique.ele"
-plot_triangles_from_files(nodes,ele)
-nodes = "preprocessing//output//calotte_spherique_R200.1.node"
-ele = "preprocessing//output//calotte_spherique_R200.1.ele"
-plot_triangles_from_files(nodes,ele)
-plt.show()
+# nodes = "preprocessing//output//calotte_spherique.node"
+# ele = "preprocessing//output//calotte_spherique.ele"
+# plot_triangles_from_files(nodes,ele)
+# nodes = "preprocessing//output//calotte_spherique_R200.1.node"
+# ele = "preprocessing//output//calotte_spherique_R200.1.ele"
+# plot_triangles_from_files(nodes,ele)
+# plt.show()
 
 # TEST 10
 # Resultat 
