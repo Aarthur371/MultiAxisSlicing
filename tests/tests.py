@@ -2,9 +2,10 @@
 
 import sys
 import os
+import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from plot.plot import extraire_coord_fichier, affichage, plot_nodes_from_file
+from plot.plot import extraire_coord_fichier, affichage, plot_nodes_from_file, plot_triangles_from_files
 from utils.utils import fusion_fichiers
 from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_node_ele, stl_to_off
 
@@ -66,6 +67,23 @@ from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_node_ele
 #  # Configuration d'options (cf. doc TetGen)
 # off_to_node_ele(off_file,nodes,ele)
 
-# TEST 8 : représentation graphique d'un fichier node
+# # TEST 8 : représentation graphique d'un fichier node
+# # Resultat  : ok
 nodes = "preprocessing//output//calotte_spherique.node"
-plot_nodes_from_file(nodes)
+plot_nodes_from_file(nodes,1)
+nodes2 = "preprocessing//output//calotte_spherique_R200.1.node"
+plot_nodes_from_file(nodes2,2)
+#plt.show()
+
+# TEST 9 : représentation graphique des triangles (node + ele)
+# Resultat : ok
+nodes = "preprocessing//output//calotte_spherique.node"
+ele = "preprocessing//output//calotte_spherique.ele"
+plot_triangles_from_files(nodes,ele)
+nodes = "preprocessing//output//calotte_spherique_R200.1.node"
+ele = "preprocessing//output//calotte_spherique_R200.1.ele"
+plot_triangles_from_files(nodes,ele)
+plt.show()
+
+# TEST 10
+# Resultat 

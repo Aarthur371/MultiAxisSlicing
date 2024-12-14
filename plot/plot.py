@@ -126,7 +126,7 @@ def affichage(coordonnees,frames_skip):
     plt.show()
 
 
-def plot_nodes_from_file(node_file):
+def plot_nodes_from_file(node_file,fig_num):
     """ Lit un fichier .node et affiche les noeuds dans un graphique 3D.
 
     Args:
@@ -157,7 +157,7 @@ def plot_nodes_from_file(node_file):
     x_coords, y_coords, z_coords = zip(*nodes)
 
     # Créer le graphique 3D
-    fig = plt.figure()
+    fig = plt.figure(fig_num)
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x_coords, y_coords, z_coords, c='b', marker='o', label='Nodes')
 
@@ -168,8 +168,64 @@ def plot_nodes_from_file(node_file):
     ax.set_title(f"3D Plot des noeuds: {file_title}")
 
     ax.legend()
-    plt.show()
+    # plot dans fonction principale pour affichage plots multiples
+    #plt.show(block=False) #Affiche tout en continuant l'execution
 
+
+
+def plot_triangles_from_files(node_file, ele_file):
+    """
+    Lit les fichiers .node et .ele pour afficher les triangles dans un graphique 3D.
+
+    Args:
+        node_file (str): Chemin vers le fichier .node.
+        ele_file (str): Chemin vers le fichier .ele.
+    """
+    # Lire les nœuds depuis le fichier .node
+    nodes = []
+    with open(node_file, 'r') as file:
+        lines = file.readlines()
+
+        for line in lines[1:]:  # Ignorer la première ligne qui contient les métadonnées
+            parts = line.split()
+            if len(parts) >= 4:
+                try:
+                    x, y, z = float(parts[1]), float(parts[2]), float(parts[3])
+                    nodes.append((x, y, z))
+                except ValueError:
+                    continue
+
+    # Lire les triangles depuis le fichier .ele
+    triangles = []
+    with open(ele_file, 'r') as file:
+        lines = file.readlines()
+
+        for line in lines[1:]:  # Ignorer la première ligne qui contient les métadonnées
+                parts = line.split()
+                if len(parts) >= 4:
+                    try:
+                        # Les trois derniers nombres sont les indices des nœuds
+                        v1, v2, v3 = int(parts[1]), int(parts[2]), int(parts[3])
+                        triangles.append((v1, v2, v3))
+                    except ValueError:
+                        continue
+
+    # Créer le graphique 3D
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # Afficher les triangles
+    for triangle in triangles:
+        x = [nodes[triangle[0]][0], nodes[triangle[1]][0], nodes[triangle[2]][0], nodes[triangle[0]][0]]
+        y = [nodes[triangle[0]][1], nodes[triangle[1]][1], nodes[triangle[2]][1], nodes[triangle[0]][1]]
+        z = [nodes[triangle[0]][2], nodes[triangle[1]][2], nodes[triangle[2]][2], nodes[triangle[0]][2]]
+        ax.plot(x, y, z, c='r')
+
+    # Ajouter les labels et le titre
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title("3D Plot des triangles")
 
 # ------------------ MAIN LOOP --------------------------#
 

@@ -155,7 +155,7 @@ def off_to_node_ele(off_file, node_file, ele_file):
     tet = tetgen.TetGen(mesh)
 
     # Tétraédralisation aved options spécifiées (switches)
-    tet.tetrahedralize(order=1)
+    tet.tetrahedralize(order=1,switches='-a4.0')
 
     # Export fichiers .node et .ele
     vertices = tet.grid.points
