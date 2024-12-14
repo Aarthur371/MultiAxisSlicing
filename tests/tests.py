@@ -4,9 +4,9 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from plot.plot import extraire_coord_fichier, affichage
+from plot.plot import extraire_coord_fichier, affichage, plot_nodes_from_file
 from utils.utils import fusion_fichiers
-from preprocessing.STLtoTET import mesh_to_tet, stl_to_node_ele, stl_to_off
+from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_node_ele, stl_to_off
 
 # TEST 1 :Récupération des positions de l'outil à partir du fichier txt
 # Resultat : OK
@@ -43,20 +43,29 @@ from preprocessing.STLtoTET import mesh_to_tet, stl_to_node_ele, stl_to_off
 # affichage(coord,frames_skip)
 
 # # TEST 5 : Conversion d'un fichier STL en fichier OFF
-# # Resultat : ok
-# input_file = "preprocessing//input//pyramide1.stl"
-# out_file = "preprocessing//output//pyramide1.off"
+# # Resultat : pareil que convertisseur en ligne (manque juste couleur des noeuds mais pas important)
+# input_file = "preprocessing//input//calotte_spherique_R200.stl"
+# out_file = "preprocessing//output//calotte_spherique.off"
 # stl_to_off(input_file,out_file)
 
 
 # TEST 6 : Conversion des ele et node en fichier TET
 # Resultat : 
-stl = "preprocessing//input//pyramide1.stl"
-ele = "preprocessing//input//ImageToStl.com_pyramide1.1.ele"
-nodes = "preprocessing//input//ImageToStl.com_pyramide1.1.node"
-out_file = "preprocessing//output//pyramide1.tet"
-stl_to_node_ele(stl,nodes,ele)
-mesh_to_tet(nodes,ele,out_file)
+# stl = "preprocessing//input//pyramide1.stl"
+# ele = "preprocessing//input//ImageToStl.com_pyramide1.1.ele"
+# nodes = "preprocessing//input//ImageToStl.com_pyramide1.1.node"
+# out_file = "preprocessing//output//pyramide1.tet"
+# stl_to_node_ele(stl,nodes,ele)
+# mesh_to_tet(nodes,ele,out_file)
 
-# TEST 7 :
+# TEST 7 : Conversion de OFF en ele et node
 # Resultat : 
+# off_file = "preprocessing//output//calotte_spherique.off"
+# ele = "preprocessing//output//calotte_spherique.ele"
+# nodes = "preprocessing//output//calotte_spherique.node"
+#  # Configuration d'options (cf. doc TetGen)
+# off_to_node_ele(off_file,nodes,ele)
+
+# TEST 8 : représentation graphique d'un fichier node
+nodes = "preprocessing//output//calotte_spherique.node"
+plot_nodes_from_file(nodes)

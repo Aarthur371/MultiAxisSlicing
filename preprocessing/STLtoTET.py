@@ -142,3 +142,35 @@ def mesh_to_tet(node_file, ele_file, output_tet_file):
     
     print(f"Fichier .tet cree avec succes : {output_tet_file}")
 
+def off_to_node_ele(off_file, node_file, ele_file):
+    mesh = pv.read(off_file)
+
+    # Convertir en PolyData si nécessaire
+    if not isinstance(mesh, pv.PolyData):
+        mesh = mesh.extract_surface()
+
+    if not mesh.is_all_triangles:
+        mesh = mesh.triangulate()
+
+    tet = tetgen.TetGen(mesh)
+
+    # Tétraédralisation aved options spécifiées (switches)
+    tet.tetrahedralize(order=1)
+
+    # Export fichiers .node et .ele
+    vertices = tet.grid.points
+    tets = tet.grid.cells_dict[10]
+
+    with open(node_file, 'w') as f:
+        f.write(f"{len(vertices)} 3 0 0\n")
+        for i, (x, y, z) in enumerate(vertices):
+            f.write(f"{i} {x} {y} {z}\n")
+        print("Fichier node cree")
+
+    with open(ele_file, 'w') as f:
+        f.write(f"{len(tets)} 4 0\n")
+        for i, tet in enumerate(tets):
+            f.write(f"{i} {' '.join(map(str, tet))}\n")
+        print("Fichier ele cree")
+
+

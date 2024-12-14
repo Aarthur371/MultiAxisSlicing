@@ -126,6 +126,51 @@ def affichage(coordonnees,frames_skip):
     plt.show()
 
 
+def plot_nodes_from_file(node_file):
+    """ Lit un fichier .node et affiche les noeuds dans un graphique 3D.
+
+    Args:
+        node_file (str): Chemin vers le fichier .node. """
+    # Extraire le nom du fichier sans extension pour le titre
+    file_title = os.path.splitext(os.path.basename(node_file))[0]
+
+    # Lire les données du fichier
+    nodes = []
+    with open(node_file, 'r') as file:
+        lines = file.readlines()
+
+        # Ignorer la première ligne qui contient les métadonnées
+        for line in lines[1:]:
+            parts = line.split()
+            if len(parts) >= 4:  # Assurer qu'il y a au moins ID, x, y, z
+                try:
+                    x, y, z = float(parts[1]), float(parts[2]), float(parts[3])
+                    nodes.append((x, y, z))
+                except ValueError:
+                    continue  # Ignorer les lignes mal formatées
+    # Vérifier si des nœuds ont été extraits
+    if not nodes:
+        print("Aucun noeud valide trouve dans le fichier.")
+        return
+
+    # Convertir les coordonnées en listes
+    x_coords, y_coords, z_coords = zip(*nodes)
+
+    # Créer le graphique 3D
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(x_coords, y_coords, z_coords, c='b', marker='o', label='Nodes')
+
+    # Ajouter les labels et le titre
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title(f"3D Plot des noeuds: {file_title}")
+
+    ax.legend()
+    plt.show()
+
+
 # ------------------ MAIN LOOP --------------------------#
 
 
