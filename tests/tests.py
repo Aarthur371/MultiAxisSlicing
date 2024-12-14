@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from plot.plot import extraire_coord_fichier, affichage, plot_nodes_from_file, plot_triangles_from_files
 from utils.utils import fusion_fichiers
-from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_node_ele, stl_to_off
+from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_off, preprocessing
 
 # TEST 1 :Récupération des positions de l'outil à partir du fichier txt
 # Resultat : OK
@@ -50,12 +50,12 @@ from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_node_ele
 # stl_to_off(input_file,out_file)
 
 
-# TEST 6 : Conversion des ele et node en fichier TET
-# Resultat : 
-ele = "preprocessing//output//calotte_spherique_R200.1.ele"
-nodes = "preprocessing//output//calotte_spherique_R200.1.node"
-out_file = "preprocessing//output//calotte_spherique_R200.1.tet"
-mesh_to_tet(nodes,ele,out_file)
+# # TEST 6 : Conversion des ele et node en fichier TET
+# # Resultat : 
+# ele = "preprocessing//output//calotte_spherique_R200.1.ele"
+# nodes = "preprocessing//output//calotte_spherique_R200.1.node"
+# out_file = "preprocessing//output//calotte_spherique_R200.1.tet"
+# mesh_to_tet(nodes,ele,out_file)
 
 # TEST 7 : Conversion de OFF en ele et node
 # Resultat : 
@@ -83,5 +83,8 @@ mesh_to_tet(nodes,ele,out_file)
 # plot_triangles_from_files(nodes,ele)
 # plt.show()
 
-# TEST 10
+# TEST 10 : chaine de traitement globale
 # Resultat 
+stl = "preprocessing//input//pyramide1.stl"
+tet = "preprocessing//output//pyramide1.tet"
+preprocessing(stl,tet)

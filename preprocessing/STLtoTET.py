@@ -1,8 +1,16 @@
-
+import os
 import trimesh
 import tetgen
 import meshio
 import pyvista as pv
+
+def preprocessing(stl_file,tet_file):
+    off_file = "preprocessing//output//" + os.path.splitext(os.path.basename(stl_file))[0] + ".off"
+    stl_to_off(stl_file,off_file)
+    node_file = "preprocessing//output//" + os.path.splitext(os.path.basename(stl_file))[0] + ".node"
+    ele_file = "preprocessing//output//" + os.path.splitext(os.path.basename(stl_file))[0] + ".ele"
+    off_to_node_ele(off_file,node_file,ele_file)
+    mesh_to_tet(node_file,ele_file,tet_file)
 
 def stl_to_off(stl_file,off_file):
     """
@@ -22,78 +30,6 @@ def stl_to_off(stl_file,off_file):
         # Écrire le contenu dans le fichier
         with open(off_file, 'w') as file:
             file.write(off_content)
-
-# def stl_to_tet(stl_file,tet_file):
-#     """
-#     Convertit un fichier STL en fichier TET (maillage volumetrique).
-#     stl_file: Chemin du fichier STL d'entree.
-#     tet_file: Chemin du fichier TET de sortie.
-#     """
-#     # Charger le fichier STL avec trimesh
-#     surface_mesh = trimesh.load(stl_file)
-#     if not surface_mesh.is_watertight:
-#         raise ValueError("Le maillage STL n'est pas ferme (watertight). Reparez-le avant la conversion.")
-    
-#     # Convertir le maillage Trimesh en maillage PyVista (PolyData)
-#     vertices = surface_mesh.vertices
-#     faces = surface_mesh.faces.reshape(-1, 4)[:, 1:]  # Trimesh stocke les faces avec un préfixe
-#     pv_mesh = pv.PolyData(vertices, faces)
-    
-#     # Vérifier si le maillage est triangulaire, sinon le trianguler
-#     if not pv_mesh.is_all_triangles:
-#         pv_mesh = pv_mesh.triangulate()
-
-#     # Passer à TetGen pour la tétrahédralisation
-#     tet = tetgen.TetGen(pv_mesh)
-#     tet.tetrahedralize(order=1)  # Ordre 1 : tétraèdres simples
-    
-#     # Sauvegarder les fichiers générés
-#     tet.write_tetgen_files(tet_file)
-#     print(f"Tetrahedralisation terminee. Fichiers generes : {tet_file}")
-
-
-def stl_to_node_ele(stl_file, node_file, ele_file):
-    """
-    Convertit un fichier STL en fichiers .node et .ele.
-
-    Args:
-        stl_file (str): Chemin vers le fichier STL en entree.
-        node_file (str): Chemin vers le fichier .node en sortie.
-        ele_file (str): Chemin vers le fichier .ele en sortie.
-    """
-    # Charger le fichier STL avec PyVista
-    stl_mesh = pv.read(stl_file)
-
-    # Vérifier que le maillage est triangulaire
-    if not stl_mesh.is_all_triangles:
-        stl_mesh = stl_mesh.triangulate()
-
-    # Tétraédralisation avec TetGen
-    tet = tetgen.TetGen(stl_mesh)
-    tet.tetrahedralize(order=1)
-
-    # Extraire les sommets et les tétraèdres
-    vertices = tet.grid.points
-    tets = tet.grid.cells_dict[10]  # 10 est le type de cellule pour les tétraèdres
-
-    # Écrire le fichier .node
-    with open(node_file, 'w') as f:
-        # Première ligne : nombre de sommets, dimensions, et autres paramètres
-        f.write(f"{len(vertices)} 3 0 0\n")
-        # Écrire les coordonnées des sommets
-        for i, (x, y, z) in enumerate(vertices):
-            f.write(f"{i} {x} {y} {z}\n")
-
-    # Écrire le fichier .ele
-    with open(ele_file, 'w') as f:
-        # Première ligne : nombre d'éléments, sommets par élément, et autres paramètres
-        f.write(f"{len(tets)} 4 0\n")
-        # Écrire les tétraèdres
-        for i, tet in enumerate(tets):
-            f.write(f"{i} {' '.join(map(str, tet))}\n")
-
-    print(f"Fichiers generes : {node_file}, {ele_file}")
-
 
 
 def mesh_to_tet(node_file, ele_file, output_tet_file):
@@ -172,5 +108,3 @@ def off_to_node_ele(off_file, node_file, ele_file):
         for i, tet in enumerate(tets):
             f.write(f"{i} {' '.join(map(str, tet))}\n")
         print("Fichier ele cree")
-
-
