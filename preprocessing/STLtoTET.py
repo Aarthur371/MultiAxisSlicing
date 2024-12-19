@@ -108,3 +108,24 @@ def off_to_node_ele(off_file, node_file, ele_file):
         for i, tet in enumerate(tets):
             f.write(f"{i} {' '.join(map(str, tet))}\n")
         print("Fichier ele cree")
+
+def handleNodes(nb_nodes, out_path):
+    ''' Creation du fichier txt definissant les proprietes fixed et handle des noeuds d'un maillage
+   nb_nodes : nombre de noeuds du fichier
+   out_path : chemin vers le fichier txt a ecrire
+   '''
+   # Pour l'instant, tous les noeuds ont comme propriétés isFixed = 0 / isHandle = 1
+    with open(out_path, 'w') as file:
+        for i in range(1, nb_nodes + 1):
+            file.write(f"{i}:0:1:\n")
+    print("Generation de ",out_path, "terminee")
+
+def get_vertices_count(file_path):
+    ''' Recupere le nombre de sommets d'un fichier tet (ecrit sur la 1ere ligne)
+    file_path: Chemin du fichier texte
+    return: Le nombre entier extrait de la premiere ligne.
+    '''
+    with open(file_path, 'r') as file:
+        first_line = file.readline()
+        number = int(first_line.split()[0])
+        return number

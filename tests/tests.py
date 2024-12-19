@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from plot.plot import extraire_coord_fichier, affichage, plot_nodes_from_file, plot_triangles_from_files
 from utils.utils import fusion_fichiers
-from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_off, preprocessing
+from preprocessing.STLtoTET import get_vertices_count, handleNodes, mesh_to_tet, off_to_node_ele, stl_to_off, preprocessing
 
 # TEST 1 :Récupération des positions de l'outil à partir du fichier txt
 # Resultat : OK
@@ -71,7 +71,7 @@ from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_off, pre
 # plot_nodes_from_file(nodes,1)
 # nodes2 = "preprocessing//output//calotte_spherique_R200.1.node"
 # plot_nodes_from_file(nodes2,2)
-#plt.show()
+# plt.show()
 
 # TEST 9 : représentation graphique des triangles (node + ele)
 # Resultat : ok
@@ -83,8 +83,24 @@ from preprocessing.STLtoTET import mesh_to_tet, off_to_node_ele, stl_to_off, pre
 # plot_triangles_from_files(nodes,ele)
 # plt.show()
 
-# TEST 10 : chaine de traitement globale
-# Resultat 
-stl = "preprocessing//input//pyramide1.stl"
-tet = "preprocessing//output//pyramide1.tet"
-preprocessing(stl,tet)
+# # TEST 10 : chaine de traitement globale
+# # Resultat 
+# stl = "preprocessing//input//pyramide1.stl"
+# tet = "preprocessing//output//pyramide1.tet"
+# preprocessing(stl,tet)
+
+# TEST 11 : creation d'un txt minimal pour ajouter a selection_file dans S3 Slicer
+# Resultat : 
+tet = "preprocessing//output//calotte_spherique.tet"
+out = "preprocessing//output//calotte_spherique.txt"
+nb_vertices = get_vertices_count(tet)
+handleNodes(nb_vertices,out)
+
+# TEST 12 : 
+# Resultat : 
+
+# TEST 13 : 
+# Resultat : 
+
+# TEST 14 : 
+# Resultat : 
