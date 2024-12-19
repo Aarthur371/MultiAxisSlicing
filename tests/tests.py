@@ -89,18 +89,26 @@ from preprocessing.STLtoTET import get_vertices_count, handleNodes, mesh_to_tet,
 # tet = "preprocessing//output//pyramide1.tet"
 # preprocessing(stl,tet)
 
-# TEST 11 : creation d'un txt minimal pour ajouter a selection_file dans S3 Slicer
-# Resultat : 
-tet = "preprocessing//output//calotte_spherique.tet"
-out = "preprocessing//output//calotte_spherique.txt"
-nb_vertices = get_vertices_count(tet)
-handleNodes(nb_vertices,out)
+# # TEST 11 : creation d'un txt minimal pour ajouter a selection_file dans S3 Slicer
+# # Resultat : 
+# tet = "preprocessing//output//calotte_spherique.tet"
+# out = "preprocessing//output//calotte_spherique.txt"
+# nb_vertices = get_vertices_count(tet)
+# handleNodes(nb_vertices,out)
 
-# TEST 12 : 
+# TEST 12 : Reprise du test 4 pour la calotte_spherique et en inversant la suite des couches
 # Resultat : 
+directory = 'plot\\'
+fichiers = [directory + f'input\\calotte_spherique\\{i}.txt' for i in range(89,-1,-1)]
+fichier_fusionne = directory + 'output\\layersCalotteSpherique.txt'
+fusion_fichiers(fichiers,fichier_fusionne)
+coord = extraire_coord_fichier(fichier_fusionne)
+frames_skip = 50
+affichage(coord,frames_skip)
 
 # TEST 13 : 
 # Resultat : 
 
 # TEST 14 : 
 # Resultat : 
+
