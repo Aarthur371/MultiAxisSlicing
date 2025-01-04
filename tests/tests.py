@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from plot.plot import extraire_coord_fichier, affichage, plot_nodes_from_file, plot_triangles_from_files
 from utils.utils import fusion_fichiers
 from preprocessing.STLtoTET import get_vertices_count, handleNodes, mesh_to_tet, off_to_node_ele, stl_to_off, preprocessing
+from parser.parser6axis import extraire_gcode
 
 # TEST 1 :Récupération des positions de l'outil à partir du fichier txt
 # Resultat : OK
@@ -106,16 +107,12 @@ from preprocessing.STLtoTET import get_vertices_count, handleNodes, mesh_to_tet,
 # frames_skip = 50
 # affichage(coord,frames_skip)
 
-directory = 'plot\\'
-fichiers = [directory + f'input\\{i}.txt' for i in range(9,-1,-1)]
-fichier_fusionne = directory + 'output\\pyramide1.txt'
-fusion_fichiers(fichiers,fichier_fusionne)
-coord = extraire_coord_fichier(fichier_fusionne)
-frames_skip = 50
-affichage(coord,frames_skip)
 
-# TEST 13 : 
-# Resultat : 
+# TEST 13 : Fonction d'extraction des instructions g-code 6 axes généré par s3slicer
+# Resultat : ok pour gcode calotte spherique
+fichier = "parser\\input\\calotte_spherique_GCODE.txt"
+donnees = extraire_gcode(fichier)
+print(donnees)
 
 # TEST 14 : 
 # Resultat : 

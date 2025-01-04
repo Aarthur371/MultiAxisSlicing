@@ -1,3 +1,6 @@
+import re
+from utils import utils
+
 #---------------------------VARIABLES---------------------------#
 
 inFolder = "inputs"
@@ -6,14 +9,14 @@ repere = "/RPlateau"
 
 #---------------------------FONCTIONS---------------------------#
 
-def extraire_donnees_fichier(fichier):
-    ''' Parcourt le fichier donne et recupere les valeurs des positions X,Y,Z et celle de l'extrudeur E
+def extraire_gcode(fichier):
+    ''' Parcourt le fichier donne et recupere les valeurs des positions X,Y,Z,A,B,C et celle de l'extrudeur E
     Commandes traitees : G0,G1,G28
     fichier : chemin relatif vers le fichier contenant le gcode
-    return : liste des positions successives [X,Y,Z], elements = None si pas de deplacement dans une direction'''
+    return : liste des positions successives [X,Y,Z,A,B,C], elements = None si pas de deplacement dans une direction'''
 
     donnees = []
-    lastPos = [0,0,0,0] #liste pour sauvegarder les dernières positions sur chaque axe
+    lastPos = [0,0,0,0,0,0,0] #liste pour sauvegarder les dernières positions sur chaque axe
     # Ouvrir le fichier pour la lecture
     with open(fichier, 'r') as f:
         lignes = f.readlines()
@@ -22,13 +25,16 @@ def extraire_donnees_fichier(fichier):
         for ligne in lignes:
             # Traduit la commande G28 = "home all axis" en une position [0,0,0]
             if ligne.startswith('G28'):
-                donnees.append([0.0,0.0,0.0,lastPos[3]])
+                donnees.append([0.0,0.0,0.0,0.0,0.0,0.0,lastPos[3]])
             # Vérifier si la ligne commence par G1 ou G0 = "linear move"
             elif ligne.startswith(('G1','G0')):
-                # Utiliser une regex pour trouver les valeurs X,Y,Z,E
+                # Utiliser une regex pour trouver les valeurs X,Y,Z,A,B,C,E
                 x = re.search(r'X([-\d.]+)', ligne)
                 y = re.search(r'Y([-\d.]+)', ligne)
                 z = re.search(r'Z([-\d.]+)', ligne)
+                a = re.search(r'A([-\d.]+)', ligne)
+                b = re.search(r'B([-\d.]+)', ligne)
+                c = re.search(r'C([-\d.]+)', ligne)
                 e = re.search(r'E([-\d.]+)', ligne)
 
                 # Extraire les valeurs et les mettre dans une liste, mettre None si une valeur est manquante
@@ -36,10 +42,13 @@ def extraire_donnees_fichier(fichier):
                     float(x.group(1)) if x else lastPos[0],
                     float(y.group(1)) if y else lastPos[1],
                     float(z.group(1)) if z else lastPos[2],
-                    float(e.group(1)) if e else lastPos[3]
+                    float(a.group(1)) if a else lastPos[3],
+                    float(b.group(1)) if b else lastPos[4],
+                    float(c.group(1)) if c else lastPos[5],
+                    float(e.group(1)) if e else lastPos[6]
                 ]
                 # Vérifie que l'on a au moins une instruction de déplacement différente des précédentes (exclue les commandes Feedrate)
-                if not utils.utils.listesIdentiques(valeurs, lastPos):
+                if not utils.listesIdentiques(valeurs, lastPos):
                     # Ajouter cette ligne de valeurs à la liste de données
                     donnees.append(valeurs)
                     lastPos = valeurs
