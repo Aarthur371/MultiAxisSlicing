@@ -96,11 +96,19 @@ from preprocessing.STLtoTET import get_vertices_count, handleNodes, mesh_to_tet,
 # nb_vertices = get_vertices_count(tet)
 # handleNodes(nb_vertices,out)
 
-# TEST 12 : Reprise du test 4 pour la calotte_spherique et en inversant la suite des couches
-# Resultat : 
+# # TEST 12 : Reprise du test 4 pour la calotte_spherique et en inversant la suite des couches
+# # Resultat : 
+# directory = 'plot\\'
+# fichiers = [directory + f'input\\calotte_spherique\\{i}.txt' for i in range(89,-1,-1)]
+# fichier_fusionne = directory + 'output\\layersCalotteSpherique.txt'
+# fusion_fichiers(fichiers,fichier_fusionne)
+# coord = extraire_coord_fichier(fichier_fusionne)
+# frames_skip = 50
+# affichage(coord,frames_skip)
+
 directory = 'plot\\'
-fichiers = [directory + f'input\\calotte_spherique\\{i}.txt' for i in range(89,-1,-1)]
-fichier_fusionne = directory + 'output\\layersCalotteSpherique.txt'
+fichiers = [directory + f'input\\{i}.txt' for i in range(9,-1,-1)]
+fichier_fusionne = directory + 'output\\pyramide1.txt'
 fusion_fichiers(fichiers,fichier_fusionne)
 coord = extraire_coord_fichier(fichier_fusionne)
 frames_skip = 50
