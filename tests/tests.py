@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from plot.plot import extraire_coord_fichier, affichage, plot_nodes_from_file, plot_triangles_from_files
+from plot.plot import extraire_coord_fichier, affichage, affichage2, plot_triangles_from_files
 from utils.utils import fusion_fichiers
 from preprocessing.STLtoTET import get_vertices_count, handleNodes, mesh_to_tet, off_to_node_ele, stl_to_off, preprocessing
 from parser.parser6axis import calculDirectionDepl, export_commandes_robot, extraire_gcode
@@ -124,3 +124,15 @@ repere = "/RPlateau"
 donnees = extraire_gcode(inFile)
 directions = calculDirectionDepl(donnees)
 export_commandes_robot(outFile,directions,repere,vitLin,vitAng)
+
+# TEST 15 (décommenter test 14) : plot trajectoire robot générée test 14 (uniquement positions X,Y,Z)
+# Resultat : pas la calotte sphérique attendue, à investiger
+vect = [coord[:3] for coord in directions]
+print(vect)
+affichage2(vect,20)
+
+# TEST 16 : 
+# Resultat :
+
+# TEST 17 : 
+# Resultat :

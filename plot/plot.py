@@ -125,6 +125,7 @@ def affichage(coordonnees,frames_skip):
     # Affichage de l'animation
     plt.show()
 
+# FONCTIONS AFFICHAGE MESH
 
 def plot_nodes_from_file(node_file,fig_num):
     """ Lit un fichier .node et affiche les noeuds dans un graphique 3D.
@@ -227,8 +228,87 @@ def plot_triangles_from_files(node_file, ele_file):
     ax.set_zlabel('Z')
     ax.set_title("3D Plot des triangles")
 
-# ------------------ MAIN LOOP --------------------------#
 
+# FONCTIONS AFFICHAGE XYZ
+
+def configPlot2(coordonnees, ax):
+    # Récupération du nombre de coordonnées à afficher
+    size = len(coordonnees)
+    # Récupération des points de trajectoire dans l'espace
+    t = np.linspace(0,100,size)  # Nombre de points à afficher
+    x = [coord[0] for coord in coordonnees]
+    y = [coord[1] for coord in coordonnees]
+    z = [coord[2] for coord in coordonnees]
+
+    # Configuration initiale des limites (ajustées aux données)
+    # offset de +/- 2 pour que le vecteur directeur de l'outil soit dans le plot
+    ax.set_xlim(min(x)-2, max(x)+2)
+    ax.set_ylim(min(y)-2, max(y)+2)
+    ax.set_zlim(min(z)-2, max(z)+2) 
+
+    # Configuration légende
+    ax.set_title("Trajectoire outil")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
+
+    # Ligne pour la trajectoire
+    line, = ax.plot([], [], [], lw=2)
+
+    return line, x, y, z, t
+
+# Fonction pour initialiser l'animation
+def initPlot2(line):
+    line.set_data([], [])
+    line.set_3d_properties([])
+    return line
+
+# Fonction de mise à jour de l'animation
+def updatePlot2(num, line, ax, x, y, z, frames_skip):
+    # Somme les déplacements depuis le début pour obtenir la position actuelle
+    x_abs = np.cumsum(x[:num])
+    y_abs = np.cumsum(y[:num])
+    z_abs = np.cumsum(z[:num])
+    # Mise à jour de la trajectoire
+    line.set_data(x_abs[:num], y_abs[:num])
+    line.set_3d_properties(z_abs[:num])
+
+    # Condition pour arrêter l'animation après l'affichage de la dernière frame
+    if num == (len(x)/frames_skip) - 1:
+        print("Fin de trace de la trajectoire")
+        ani.event_source.stop()
+
+
+    return line,
+
+def affichage2(coordonnees,frames_skip):
+    ''' Affichage des trajectoires XYZ dans un graphique matplotlib
+    coordonnees : vecteur [x,y,z]
+    frames_skip : nombre de frames a sauter lors de l'affichage (plus rapide) '''
+    # Création de la figure 3D
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # Configuration initiale
+    line, x, y, z, t = configPlot2(coordonnees, ax)
+
+    # Création de l'animation
+    ani = FuncAnimation(
+        fig, 
+        updatePlot2, 
+        frames = range(0, len(t), frames_skip), 
+        fargs=(line, ax, x, y, z, frames_skip), 
+        init_func=lambda: initPlot2(line), 
+        blit=False, 
+        interval=10,
+        repeat=False
+    ) 
+    # frames range(start,stop,frames_skip) avec frames_skip=2 : 1 frame sur 2 affichée
+    #interval : intervalle de rafraichissment de la figure en ms
+    #repeat : permet de rejouer ou non l'animation une fois qu'elle est terminée
+
+    # Affichage de l'animation
+    plt.show()
 
 
 
