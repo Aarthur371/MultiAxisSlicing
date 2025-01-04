@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from plot.plot import extraire_coord_fichier, affichage, plot_nodes_from_file, plot_triangles_from_files
 from utils.utils import fusion_fichiers
 from preprocessing.STLtoTET import get_vertices_count, handleNodes, mesh_to_tet, off_to_node_ele, stl_to_off, preprocessing
-from parser.parser6axis import extraire_gcode
+from parser.parser6axis import calculDirectionDepl, export_commandes_robot, extraire_gcode
 
 # TEST 1 :Récupération des positions de l'outil à partir du fichier txt
 # Resultat : OK
@@ -108,12 +108,19 @@ from parser.parser6axis import extraire_gcode
 # affichage(coord,frames_skip)
 
 
-# TEST 13 : Fonction d'extraction des instructions g-code 6 axes généré par s3slicer
-# Resultat : ok pour gcode calotte spherique
-fichier = "parser\\input\\calotte_spherique_GCODE.txt"
-donnees = extraire_gcode(fichier)
-print(donnees)
+# # TEST 13 : Fonction d'extraction des instructions g-code 6 axes généré par s3slicer
+# # Resultat : ok pour gcode calotte spherique
+# fichier = "parser\\input\\calotte_spherique_GCODE.txt"
+# donnees = extraire_gcode(fichier)
+# print(donnees)
 
-# TEST 14 : 
-# Resultat : 
-
+# TEST 14 : calcul coordonnees absolues et extraction code robot (divise les déplacements combinés en 2 dépl. linéaire puis anglulaire)
+# Resultat : ok, reste à trouver un moyen de combiner mvmt linéaire et angulaire
+inFile = "parser\\input\\calotte_spherique_GCODE.txt"
+outFile = "parser\\output\\calotte_spherique_cmdsRobot.txt"
+vitLin = 7
+vitAng = 3.14/12
+repere = "/RPlateau"
+donnees = extraire_gcode(inFile)
+directions = calculDirectionDepl(donnees)
+export_commandes_robot(outFile,directions,repere,vitLin,vitAng)

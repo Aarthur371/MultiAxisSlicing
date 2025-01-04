@@ -11,7 +11,7 @@ repere = "/RPlateau"
 
 def extraire_gcode(fichier):
     ''' Parcourt le fichier donne et recupere les valeurs des positions X,Y,Z,A,B,C et celle de l'extrudeur E
-    Commandes traitees : G0,G1,G28
+    Commandes traitees : G0,G1
     fichier : chemin relatif vers le fichier contenant le gcode
     return : liste des positions successives [X,Y,Z,A,B,C], elements = None si pas de deplacement dans une direction'''
 
@@ -23,11 +23,8 @@ def extraire_gcode(fichier):
 
         # Parcourir chaque ligne du fichier
         for ligne in lignes:
-            # Traduit la commande G28 = "home all axis" en une position [0,0,0]
-            if ligne.startswith('G28'):
-                donnees.append([0.0,0.0,0.0,0.0,0.0,0.0,lastPos[3]])
             # Vérifier si la ligne commence par G1 ou G0 = "linear move"
-            elif ligne.startswith(('G1','G0')):
+            if ligne.startswith(('G1','G0')):
                 # Utiliser une regex pour trouver les valeurs X,Y,Z,A,B,C,E
                 x = re.search(r'X([-\d.]+)', ligne)
                 y = re.search(r'Y([-\d.]+)', ligne)
@@ -57,9 +54,9 @@ def extraire_gcode(fichier):
 
 
 def calculDirectionDepl(donnees):
-    '''Creation du vecteur contenant les valeurs de deplacement en X,Y,Z entre 2 positions
-    donnees : liste des positions absolues [X,Y,Z]
-    return : liste des deplacement relatifs [X,Y,Z] '''
+    '''Creation du vecteur contenant les valeurs de deplacement en X,Y,Z et A,B,C entre 2 positions
+    donnees : liste des positions/orientations absolues [X,Y,Z,A,B,C]
+    return : liste des deplacement/orientations relatifs [X,Y,Z,A,B,C] '''
 
     directions = []
     for i in range (1,len(donnees)):
@@ -67,25 +64,35 @@ def calculDirectionDepl(donnees):
         diffX = round(donnees[i][0] - donnees[i-1][0],5)
         diffY = round(donnees[i][1] - donnees[i-1][1],5)
         diffZ = round(donnees[i][2] - donnees[i-1][2],5)
-        diffE = round(donnees[i][3] - donnees[i-1][3],5)
-        directions.append([diffX,diffY,diffZ,diffE])
+        diffA = round(donnees[i][3] - donnees[i-1][3],5)
+        diffB = round(donnees[i][4] - donnees[i-1][4],5)
+        diffC = round(donnees[i][5] - donnees[i-1][5],5)
+        diffE = round(donnees[i][6] - donnees[i-1][6],5)
+        directions.append([diffX,diffY,diffZ,diffA,diffB,diffC,diffE])
     return directions
 
-def export_commandes_robot(fichier,vecteurs,repere,vit_lin):
+def export_commandes_robot(fichier,vecteurs,repere,vit_lin,vit_ang):
     '''Genere les instructions de deplacement du robot en langage KUKA a partir de la liste des deplacements relatifs
     fichier : chemin vers le fichier .txt dans lequel generer les commandes robot
-    vecteurs : liste des vecteurs deplacement [X,Y,Z,E]
+    vecteurs : liste des vecteurs deplacement [X,Y,Z,A,B,C,E]
     repere : nom du repere pour le deplacement du robot ["/NomRepere"]
     vit_lin : vitesse lineaire lors des translations [mm/s]
     return : None'''
+    # Arrondi la vitesse angulaire à 3 décimales
+    vit_ang = round(vit_ang,3)
 
     # Créé une sous liste sans les infos en E (dernière colonne)
-    xyzPos = [vect[:3] for vect in vecteurs]
+    pose = [vect[:6] for vect in vecteurs]
     # Ouvrir un fichier en mode écriture
     with open(fichier, "w") as f:
         # Parcourir chaque ligne du tableau
-        for pos in xyzPos:
-            # Si c'est un déplacement linéaire en X, Y ou Z
-            if (pos[0]!=0 or pos[1]!=0 or pos[2]!=0):
-                # Ecrit la commande robot pour les déplacements donnés dans le fichier 
-                f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, pos)) + ",0.0,0.0,0.0),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ")," + "\n") 
+        for p in pose:
+            # Décompose en un mvmt linéaire + mvmt de rotation si les 2 combinés (solution temporaire)
+            # Si c'est un déplacement linéaire en X, Y ou Z 
+            if (p[0]!=0 or p[1]!=0 or p[2]!=0):
+                # Ecrit la commande robot pour les déplacements linéaires donnés dans le fichier 
+                f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, p[:3])) + ",0.0,0.0,0.0),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ")," + "\n") 
+            # Si c'est un déplacement angulaire en A,B ou C
+            if (p[3]!=0 or p[4]!=0 or p[5]!=0):
+                # Ecrit la commande robot pour les déplacements angulaires donnés dans le fichier 
+                f.write("linRel(Transformation.ofDeg(0.0,0.0,0.0," + ",".join(map(str, p[4:6])) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
