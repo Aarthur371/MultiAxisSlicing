@@ -52,6 +52,22 @@ def extraire_gcode(fichier):
 
     return donnees
 
+def gcode_s3slicer(donnees):
+    ''' Adapte le gcode recupere a partir de s3 slicer pour avoir les bonnes valeurs pour chaque parametre
+   donnees : tableau [X,Y,Z,E,B,C,0] dans le cas de s3 slicer
+   newDonnes : tableau [X,Y,Z,A,B,C,E] '''
+    newDonnees = []
+    for donnee in donnees:
+        x = donnee[0]
+        y = donnee[1]
+        z = donnee[2]
+        a = 0.0 # Pas de donné de l'angle de rotation autour de Z (angle A) dans s3Slicer 
+        b = donnee[4]
+        c = donnee[5]
+        e = donnee[3] # Débit extrudeur donné par A et non E dans s3Slicer
+        newDonnees.append([x,y,z,a,b,c,e])
+    return newDonnees
+
 
 def calculDirectionDepl(donnees):
     '''Creation du vecteur contenant les valeurs de deplacement en X,Y,Z et A,B,C entre 2 positions
@@ -95,4 +111,4 @@ def export_commandes_robot(fichier,vecteurs,repere,vit_lin,vit_ang):
             # Si c'est un déplacement angulaire en A,B ou C
             if (p[3]!=0 or p[4]!=0 or p[5]!=0):
                 # Ecrit la commande robot pour les déplacements angulaires donnés dans le fichier 
-                f.write("linRel(Transformation.ofDeg(0.0,0.0,0.0," + ",".join(map(str, p[4:6])) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
+                f.write("linRel(Transformation.ofDeg(0.0,0.0,0.0," + ",".join(map(str, p[3:6])) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
