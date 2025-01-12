@@ -1,4 +1,4 @@
-# MultiAxisParser
+# MultiAxisSlicing
 
 ## Description ##
 Simplification de la génération de trajectoires pour la fabrication additive sur un bras robot KUKA 6 axes à partir d'un modèle 3D.
