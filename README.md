@@ -11,13 +11,14 @@ Ce projet s'interface avec l'outil S^3 Slicer avec pour but de simplifier le pre
 ## Pre-processing ##
 Concaténation de fichiers txt pour fusionner 2 objets ou 2 couches par exemple lors de l'affichage
 - Conversion d'un fichier STL en fichier TET avec la fonction `preprocessing(stl_path,tet_path)`
-- Génération d'un fichier TXT pour l'ajout au dossier selection_file de S^3 Slicer avec handleNodes() (nécessite d'avoir généré un fichier TET)
+- Génération d'un fichier TXT pour l'ajout au dossier selection_file de S^3 Slicer avec `handleNodes()` (nécessite d'avoir généré un fichier TET)
 
 
 ## Post-processing ###
 A partir du fichier G-Code généré par S^3 Slicer, un parseur permet de transformer les instructions de déplacement en commandes pour le robot.
 
 ### Fonctionnalités implémentées ###
+- Fusion des fichiers générés (trajectoires au format X,Y,Z,I,J,K notamment) avec `fusion_fichier(liste fichiers,fichier fusionné)`
 - Passage des coordonnées absolues en coordonnées relatives
 - Export des coordonnées de déplacement absolues en commande robot KUKA (fonction de déplacement linRel)
 
