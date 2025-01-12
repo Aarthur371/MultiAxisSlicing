@@ -21,10 +21,10 @@ A partir du fichier G-Code généré par S^3 Slicer, un parseur permet de transf
 
 ## Visualisation ##
 - Affichage dans un graphique 3D des trajectoires de l'outil (X,Y,Z) + vecteur d'orientation de l'outil (I,J,K)
-    'affichage(vecteur,frameskip)'
+    `affichage(vecteur,frameskip)`
 Entrée : fichier txt contenant la liste des positions successives de l'outil (buse d'impression) au format xx.xx yy.yy zz.zz ii.ii jj.jj kk.kk
 - Affichage dans un graphique 3D des trajectoires de l'outil
-    'affichage2(vecteur,frameskip)'
+    `affichage2(vecteur,frameskip)`
 
 ![image](https://github.com/user-attachments/assets/f5f661f5-b6dc-4fa1-9021-f8b154ccb019)
 
