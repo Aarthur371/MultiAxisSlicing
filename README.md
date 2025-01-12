@@ -19,7 +19,6 @@ A partir du fichier G-Code généré par S^3 Slicer, un parseur permet de transf
 
 ### Fonctionnalités implémentées ###
 - Fusion des fichiers générés (trajectoires au format X,Y,Z,I,J,K notamment) avec `fusion_fichier(liste fichiers,fichier fusionné)`
-- Passage des coordonnées absolues en coordonnées relatives
 - Export des coordonnées de déplacement absolues en commande robot KUKA (fonction de déplacement linRel)
 
 ## Visualisation ##
