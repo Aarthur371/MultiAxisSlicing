@@ -242,9 +242,13 @@ def configPlot2(coordonnees, ax):
 
     # Configuration initiale des limites (ajustées aux données)
     # offset de +/- 2 pour que le vecteur directeur de l'outil soit dans le plot
-    ax.set_xlim(min(x)-2, max(x)+2)
-    ax.set_ylim(min(y)-2, max(y)+2)
-    ax.set_zlim(min(z)-2, max(z)+2) 
+    # ax.set_xlim(min(x)-2, max(x)+2)
+    # ax.set_ylim(min(y)-2, max(y)+2)
+    # ax.set_zlim(min(z)-2, max(z)+2) 
+    # Conservation des proportions
+    ax.set_xlim(-100, 100)
+    ax.set_ylim(-100, 100)
+    ax.set_zlim(-100, 100) 
 
     # Configuration légende
     ax.set_title("Trajectoire outil")

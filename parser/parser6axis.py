@@ -52,6 +52,49 @@ def extraire_gcode(fichier):
 
     return donnees
 
+def extraire_gcode_Open5x(fichier):
+    ''' Parcourt le fichier gcode genere par le slicer open-5x et recupere les valeurs des positions x,y,z,u,v et celle de l'extrudeur E
+    Commandes traitees : G0,G1
+    fichier : chemin relatif vers le fichier contenant le gcode
+    return : liste des positions successives [X,Y,Z,0,U,V,E], elements = None si pas de deplacement dans une direction'''
+
+    donnees = []
+    lastPos = [0,0,0,0,0,0,0] #liste pour sauvegarder les dernières positions sur chaque axe
+    # Ouvrir le fichier pour la lecture
+    with open(fichier, 'r') as f:
+        lignes = f.readlines()
+
+        # Parcourir chaque ligne du fichier
+        for ligne in lignes:
+            # Vérifier si la ligne commence par G1 ou G0 = "linear move"
+            if ligne.__contains__('G1') or ligne.__contains__('G0'):
+                # Utiliser une regex pour trouver les valeurs X,Y,Z,A,B,C,E
+                x = re.search(r'x([-\d.]+)', ligne)
+                y = re.search(r'y([-\d.]+)', ligne)
+                z = re.search(r'z([-\d.]+)', ligne)
+                u = re.search(r'u([-\d.]+)', ligne)
+                v = re.search(r'v([-\d.]+)', ligne)
+                e = re.search(r'E([-\d.]+)', ligne)
+
+                # Extraire les valeurs et les mettre dans une liste, mettre None si une valeur est manquante
+                valeurs = [
+                    float(x.group(1)) if x else lastPos[0],
+                    float(y.group(1)) if y else lastPos[1],
+                    float(z.group(1)) if z else lastPos[2],
+                    0,  # pas de rotation autour de z 
+                    float(u.group(1)) if u else lastPos[4],
+                    float(v.group(1)) if v else lastPos[5],
+                    float(e.group(1)) if e else lastPos[6]
+                ]
+                print(valeurs)
+                # Vérifie que l'on a au moins une instruction de déplacement différente des précédentes (exclue les commandes Feedrate)
+                if not utils.listesIdentiques(valeurs, lastPos):
+                    # Ajouter cette ligne de valeurs à la liste de données
+                    donnees.append(valeurs)
+                    lastPos = valeurs
+
+    return donnees
+
 def gcode_s3slicer(donnees):
     ''' Adapte le gcode recupere a partir de s3 slicer pour avoir les bonnes valeurs pour chaque parametre
    donnees : tableau [X,Y,Z,E,B,C,0] dans le cas de s3 slicer
@@ -103,12 +146,15 @@ def export_commandes_robot(fichier,vecteurs,repere,vit_lin,vit_ang):
     with open(fichier, "w") as f:
         # Parcourir chaque ligne du tableau
         for p in pose:
+            # Pas de décomposition des mvmts en rotation + translation
+            f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, p)) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ").setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
+            
             # Décompose en un mvmt linéaire + mvmt de rotation si les 2 combinés (solution temporaire)
-            # Si c'est un déplacement linéaire en X, Y ou Z 
-            if (p[0]!=0 or p[1]!=0 or p[2]!=0):
-                # Ecrit la commande robot pour les déplacements linéaires donnés dans le fichier 
-                f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, p[:3])) + ",0.0,0.0,0.0),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ")," + "\n") 
-            # Si c'est un déplacement angulaire en A,B ou C
-            if (p[3]!=0 or p[4]!=0 or p[5]!=0):
-                # Ecrit la commande robot pour les déplacements angulaires donnés dans le fichier 
-                f.write("linRel(Transformation.ofDeg(0.0,0.0,0.0," + ",".join(map(str, p[3:6])) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
+            # # Si c'est un déplacement linéaire en X, Y ou Z 
+            # if (p[0]!=0 or p[1]!=0 or p[2]!=0):
+            #     # Ecrit la commande robot pour les déplacements linéaires donnés dans le fichier 
+            #     f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, p[:3])) + ",0.0,0.0,0.0),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ")," + "\n") 
+            # # Si c'est un déplacement angulaire en A,B ou C
+            # if (p[3]!=0 or p[4]!=0 or p[5]!=0):
+            #     # Ecrit la commande robot pour les déplacements angulaires donnés dans le fichier 
+            #     f.write("linRel(Transformation.ofDeg(0.0,0.0,0.0," + ",".join(map(str, p[3:6])) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 

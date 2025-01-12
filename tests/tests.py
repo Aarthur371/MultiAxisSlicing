@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from plot.plot import extraire_coord_fichier, affichage, affichage2, plot_triangles_from_files
 from utils.utils import fusion_fichiers
 from preprocessing.STLtoTET import get_vertices_count, handleNodes, mesh_to_tet, off_to_node_ele, stl_to_off, preprocessing
-from parser.parser6axis import calculDirectionDepl, export_commandes_robot, extraire_gcode, gcode_s3slicer
+from parser.parser6axis import calculDirectionDepl, export_commandes_robot, extraire_gcode, extraire_gcode_Open5x, gcode_s3slicer
 
 # TEST 1 :Récupération des positions de l'outil à partir du fichier txt
 # Resultat : OK
@@ -131,20 +131,34 @@ from parser.parser6axis import calculDirectionDepl, export_commandes_robot, extr
 # print(vect)
 # affichage2(vect,20)
 
-# TEST 16 : idem test 14+15 avec correction ordre des paramètres récupérés dans le gcode s3slicer
-# Resultat :
-inFile = "parser\\input\\calotte_spherique_GCODE.txt"
-outFile = "parser\\output\\calotte_spherique_cmdsRobot.txt"
-vitLin = 7
+# # TEST 16 : idem test 14+15 avec correction ordre des paramètres récupérés dans le gcode s3slicer
+# # Resultat : ok
+# inFile = "parser\\input\\calotte_spherique_Gcode.txt"
+# outFile = "parser\\output\\calotte_cmdsRobot.txt"
+# vitLin = 21
+# vitAng = 3.14/12
+# repere = "/RPlateau"
+# donnees = extraire_gcode(inFile)
+# donnees = gcode_s3slicer(donnees)
+# directions = calculDirectionDepl(donnees)
+# export_commandes_robot(outFile,directions,repere,vitLin,vitAng)
+# vect = [coord[:3] for coord in directions]
+# print(vect)
+# affichage2(vect,20)
+
+# TEST 17 : test fonction dédiée pour le slicer Open-5x (Grasshopper)
+# Resultat : extrait bien le gcode mais pas forcément la trajectoire qui était attendue
+inFile = "parser\\input\\test_gcode.txt"
+outFile = "parser\\output\\testRhino_cmdsRobot.txt"
+vitLin = 21
 vitAng = 3.14/12
 repere = "/RPlateau"
-donnees = extraire_gcode(inFile)
-donnees = gcode_s3slicer(donnees)
+donnees = extraire_gcode_Open5x(inFile)
 directions = calculDirectionDepl(donnees)
 export_commandes_robot(outFile,directions,repere,vitLin,vitAng)
 vect = [coord[:3] for coord in directions]
 print(vect)
 affichage2(vect,20)
 
-# TEST 17 : 
+# TEST 18 : 
 # Resultat :
