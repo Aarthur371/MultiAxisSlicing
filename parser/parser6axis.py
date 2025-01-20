@@ -136,6 +136,7 @@ def export_commandes_robot(fichier,vecteurs,repere,vit_lin,vit_ang):
     vecteurs : liste des vecteurs deplacement [X,Y,Z,A,B,C,E]
     repere : nom du repere pour le deplacement du robot ["/NomRepere"]
     vit_lin : vitesse lineaire lors des translations [mm/s]
+    vit_ang : vitesse angulaire lors de rotations [rad/s]
     return : None'''
     # Arrondi la vitesse angulaire à 3 décimales
     vit_ang = round(vit_ang,3)
@@ -149,12 +150,60 @@ def export_commandes_robot(fichier,vecteurs,repere,vit_lin,vit_ang):
             # Pas de décomposition des mvmts en rotation + translation
             f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, p)) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ").setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
             
-            # Décompose en un mvmt linéaire + mvmt de rotation si les 2 combinés (solution temporaire)
-            # # Si c'est un déplacement linéaire en X, Y ou Z 
-            # if (p[0]!=0 or p[1]!=0 or p[2]!=0):
-            #     # Ecrit la commande robot pour les déplacements linéaires donnés dans le fichier 
-            #     f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, p[:3])) + ",0.0,0.0,0.0),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ")," + "\n") 
-            # # Si c'est un déplacement angulaire en A,B ou C
-            # if (p[3]!=0 or p[4]!=0 or p[5]!=0):
-            #     # Ecrit la commande robot pour les déplacements angulaires donnés dans le fichier 
-            #     f.write("linRel(Transformation.ofDeg(0.0,0.0,0.0," + ",".join(map(str, p[3:6])) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
+
+def export_commandes_robot_split(fichier,vecteurs,repere,vit_lin,vit_ang):
+    '''Genere les instructions de deplacement du robot en langage KUKA a partir de la liste des deplacements relatifs
+    fichier : chemin vers le fichier .txt dans lequel generer les commandes robot
+    vecteurs : liste des vecteurs deplacement [X,Y,Z,A,B,C,E]
+    repere : nom du repere pour le deplacement du robot ["/NomRepere"]
+    vit_lin : vitesse lineaire lors des translations [mm/s]
+    vit_ang : vitesse angulaire lors de rotations [rad/s]
+    return : None'''
+
+    oldE = 0
+    i = 1 #numéro du motionbatch
+    j = 1
+    resetLigne = 0
+    # Ouvrir un fichier en mode ecriture
+    with open(fichier, "w") as f:
+        #Ajout d'une ligne initiale pour la creation de methode JAVA motionbatch
+        f.write("public void mb1(){" + "\n")
+        f.write("double blend = 4;" + "\n" )
+        f.write("MotionBatch mb191 = new MotionBatch(" + "\n")
+        # Parcourir chaque ligne du tableau
+        for pos in vecteurs:
+            if (pos[6]>0 and oldE==0): #Si E positif, on clos le motionbatch et on active l'extrusion puis on ouvre le motionbatch_suivant
+                f.write("\n" + ").setBlendingCart(blend);" + "\n")
+                f.write("_lbr.move(mb191);" + "\n")
+                f.write("}" + "\n" + "\n")
+                i = i + 1
+                resetLigne = 0
+                f.write("public void mb"+ str(i) + "(){" + "\n")
+                f.write("double blend = 4;" + "\n" )
+                f.write("MotionBatch mb191 = new MotionBatch(" + "\n")
+                oldE = 1
+            if (pos[6]<0 and oldE==1): #Si E negatif, on désactive l'extrusion
+                f.write("\n" + ").setBlendingCart(blend);" + "\n")
+                f.write("_lbr.move(mb191);" + "\n")
+                f.write("}" + "\n" + "\n")
+                i = i + 1
+                resetLigne = 0
+                f.write("public void mb"+ str(i) + "(){" + "\n")
+                f.write("double blend = 4;" + "\n" ) # Paramètre de blending appliqué pour ce Motion Batch
+                f.write("MotionBatch mb191 = new MotionBatch(" + "\n") # Appelle le MotionBatch qui vient d'être défini, pour qu'il soit executé
+                oldE = 0   
+                # Ecrit la commande robot pour les deplacements donnes dans le fichier 
+            if (resetLigne==1):
+                f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, pos[:6])) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ").setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
+            if (resetLigne==0):
+                f.write("linRel(Transformation.ofDeg(" + ",".join(map(str, pos[:6])) + "),getApplicationData().getFrame(" + "\"" + repere + "\")).setCartVelocity(" + str(vit_lin) + ").setOrientationVelocity(" + str(vit_ang) + ")," + "\n") 
+                resetLigne = 1
+
+        f.write(").setBlendingCart(blend);" + "\n")
+        f.write("_lbr.move(mb191);" + "\n")
+        f.write("}" + "\n" + "\n")
+        f.write("Appel de methode a mettre dans le run " + "\n")
+        while i > 0 :
+            f.write("mb"+str(j)+"();"+"\n")
+            i = i - 1
+            j = j + 1

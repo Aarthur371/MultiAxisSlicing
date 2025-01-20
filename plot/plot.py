@@ -56,9 +56,13 @@ def configPlot(coordonnees, ax):
 
     # Configuration initiale des limites (ajustées aux données)
     # offset de +/- 2 pour que le vecteur directeur de l'outil soit dans le plot
-    ax.set_xlim(min(x)-2, max(x)+2)
-    ax.set_ylim(min(y)-2, max(y)+2)
-    ax.set_zlim(min(z)-2, max(z)+2) 
+    # ax.set_xlim(min(x)-2, max(x)+2)
+    # ax.set_ylim(min(y)-2, max(y)+2)
+    # ax.set_zlim(min(z)-2, max(z)+2) 
+    # Conservation des proportions
+    ax.set_xlim(-100, 100)
+    ax.set_ylim(-100, 100)
+    ax.set_zlim(-100, 100) 
 
     # Configuration légende
     ax.set_title("Trajectoire et orientation outil")
@@ -239,6 +243,7 @@ def configPlot2(coordonnees, ax):
     x = [coord[0] for coord in coordonnees]
     y = [coord[1] for coord in coordonnees]
     z = [coord[2] for coord in coordonnees]
+    e = [coord[6] for coord in coordonnees] #ajout info sur E
 
     # Configuration initiale des limites (ajustées aux données)
     # offset de +/- 2 pour que le vecteur directeur de l'outil soit dans le plot
@@ -251,7 +256,7 @@ def configPlot2(coordonnees, ax):
     ax.set_zlim(-100, 100) 
 
     # Configuration légende
-    ax.set_title("Trajectoire outil")
+    ax.set_title("Trajectoire issue du G-code")
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
