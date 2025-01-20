@@ -36,6 +36,8 @@ La fonction gcode_s3slicer() permet de transformer les données extraites pour q
 Entrée : fichier txt contenant la liste des positions successives de l'outil (buse d'impression) au format xx.xx yy.yy zz.zz ii.ii jj.jj kk.kk
 - Affichage dans un graphique 3D des trajectoires de l'outil avec la fonction `affichage2(vecteur,frameskip)`
 
+**Note** : la variable `frameskip` permet de ne pas afficher toutes les positions de l'outil pour accélérer la représentation.
+
 ![image](https://github.com/user-attachments/assets/f5f661f5-b6dc-4fa1-9021-f8b154ccb019)
 
 ## Utilitaires ##
