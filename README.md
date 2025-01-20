@@ -2,7 +2,7 @@
 
 ## Description ##
 Simplification de la génération de trajectoires pour la fabrication additive sur un bras robot KUKA 6 axes à partir d'un modèle 3D.
-Ce projet s'interface avec l'outil S^3 Slicer avec pour but de simplifier le pre et postprocessing.
+Ce projet s'interface avec l'outil S^3 Slicer avec pour but de simplifier le pre et postprocessing liés à l'utilisation de ce logiciel.
 
 
 ## Guide d'installation ##
