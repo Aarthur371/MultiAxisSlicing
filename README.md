@@ -36,7 +36,7 @@ La fonction gcode_s3slicer() permet de transformer les données extraites pour q
 - Affichage dans un graphique 3D des trajectoires de l'outil (X,Y,Z) + vecteur d'orientation de l'outil (I,J,K) avec la fonction `affichage(vecteur,frameskip)`
 Entrée : fichier txt contenant la liste des positions successives de l'outil (buse d'impression) au format xx.xx yy.yy zz.zz ii.ii jj.jj kk.kk
 - Affichage dans un graphique 3D des trajectoires de l'outil avec la fonction `affichage2(vecteur,frameskip)`
-
+- Affichage dans un graphique 3D des noeuds et triangles d'un maillage tétraédrique à l'aide des fonctions `plot_nodes_from_file` et `plot_triangles_from_file`
 **Note** : la variable `frameskip` permet de ne pas afficher toutes les positions de l'outil pour accélérer la représentation.
 
 ![image](https://github.com/user-attachments/assets/f5f661f5-b6dc-4fa1-9021-f8b154ccb019)
