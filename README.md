@@ -3,7 +3,8 @@
 ## Description ##
 Simplification de la génération de trajectoires pour la fabrication additive sur un bras robot KUKA 6 axes à partir d'un modèle 3D.
 Ce projet s'interface avec l'outil S^3 Slicer avec pour but de simplifier le pre et postprocessing liés à l'utilisation de ce logiciel.
-L'outil S3 Slicer : https://github.com/zhangty019/S3_DeformFDM 
+
+L'outil S3 Slicer développé par Manchester University / INRIA : https://github.com/zhangty019/S3_DeformFDM 
 
 ## Guide d'installation ##
 - Cloner le projet
