@@ -6,8 +6,8 @@ Ce projet s'interface avec l'outil S^3 Slicer avec pour but de simplifier le pre
 
 
 ## Guide d'installation ##
--Cloner le projet
--Appeler les différentes fonctions depuis le fichier tests.py
+- Cloner le projet
+- Appeler les différentes fonctions depuis le fichier tests.py ou créer un fichier main
 
 
 ## Pre-processing ##
