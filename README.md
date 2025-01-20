@@ -25,7 +25,7 @@ Ce projet s'interface avec l'outil S^3 Slicer avec pour but de simplifier le pre
 - Extraction des commandes de déplacement **G0** et **G1** depuis le G-code généré par S^3 Slicer
 - Export des coordonnées de déplacement absolues en commande robot KUKA (fonction de déplacement linRel pour le déplacement en relatif selon des trajectoires rectilignes)
 
-Note : Dans le G-code généré par S^3 Slicer, les angles B et C sont utilisés. La variable A ne correspond pas au 3ème angle mais au débit de l'extrudeur.
+**Note** : Dans le G-code généré par S^3 Slicer, les angles B et C (Euler) sont utilisés. La variable A ne correspond pas au 3ème angle mais au débit de l'extrudeur.
 La fonction gcode_s3slicer() permet de transformer les données extraites pour que la variable A soit toujours à 0 et que la variable E soit récupérée à partir de la donnée "A" dans le G-code généré par S^3 Slicer.
 
 ![image](https://github.com/user-attachments/assets/d12dcdc0-d846-4029-bf93-29f15cd45966)
